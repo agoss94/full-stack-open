@@ -9,7 +9,7 @@ const Button = ({ text, handler }) => {
 }
 
 const StatisticLine = ({text, value}) => {
-  return (<p>{text} {value}</p>)
+  return (<tr><td>{text}</td> <td>{value}</td></tr>)
 }
 
 const Statistics = ({ good, neutral, bad }) => {
