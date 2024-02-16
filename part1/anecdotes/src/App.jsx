@@ -29,8 +29,22 @@ const App = () => {
       <p>has {votes[selected]} votes</p>
       <button onClick={handleVotes}>vote</button>
       <button onClick={() => setSelected(Math.floor(Math.random() * anecdotes.length))}>next anecdote</button>
+      <h1>Anecdote with most votes</h1>
+      <p>{anecdotes[findMax(votes)]}</p>
     </div>
   )
+}
+
+function findMax(votes) {
+  let maxIndex=0
+  let maxValue=0
+  for (let i=0; i<votes.length; i++) {
+    if (maxValue < votes[i]) {
+      maxIndex = i
+      maxValue = votes[i]
+    }
+  }
+  return maxIndex
 }
 
 export default App
