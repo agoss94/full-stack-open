@@ -9,8 +9,8 @@ const App = () => {
   const [showAll, setShowAll] = useState(true);
 
   useEffect(() => {
-    noteService.getAll().then((response) => {
-      setNotes(response.data);
+    noteService.getAll().then(initialNotes => {
+      setNotes(initialNotes);
     });
   }, []);
 
