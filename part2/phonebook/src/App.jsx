@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import service from "./services/service";
+
+
 const Filter = ({ value, onChange }) => {
   return (
     <>
@@ -37,12 +39,13 @@ const PersonForm = ({
   );
 };
 
-const Persons = ({ person }) => {
+const Persons = ({ persons, deleteById}) => {
   return (
     <>
-      {person.map((person) => (
+      {persons.map((person) => (
         <p key={person.name}>
           {person.name} {person.number}
+          <button onClick={() => deleteById(person.id, person.name)}>delete</button>
         </p>
       ))}
     </>
@@ -75,6 +78,13 @@ const App = () => {
     setNewNumber("");
   };
 
+  const deleteById = (id, contact) => {
+    if (window.confirm(`Do you really want to delete the contact ${contact}`)) {
+      service.remove(id)
+      setPersons(persons.filter(p => p.id !== id))
+    }
+  }
+
   const personsToShow =
     filter.length === 0
       ? persons
@@ -94,7 +104,7 @@ const App = () => {
         onSubmit={saveNumber}
       />
       <h2>Numbers</h2>
-      <Persons person={personsToShow} />
+      <Persons persons={personsToShow} deleteById={deleteById}/>
     </div>
   );
 };
