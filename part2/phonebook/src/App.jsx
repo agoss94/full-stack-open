@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import service from "./services/service";
 
-
 const Filter = ({ value, onChange }) => {
   return (
     <>
@@ -39,13 +38,15 @@ const PersonForm = ({
   );
 };
 
-const Persons = ({ persons, deleteById}) => {
+const Persons = ({ persons, deleteById }) => {
   return (
     <>
       {persons.map((person) => (
         <p key={person.name}>
           {person.name} {person.number}
-          <button onClick={() => deleteById(person.id, person.name)}>delete</button>
+          <button onClick={() => deleteById(person.id, person.name)}>
+            delete
+          </button>
         </p>
       ))}
     </>
@@ -65,25 +66,37 @@ const App = () => {
 
   const saveNumber = (e) => {
     e.preventDefault();
-    if (persons.filter((p) => p.name === newName).length > 0) {
-      alert(`${newName} is already added to the phonebook`);
-      return;
+    const personInContactList = persons.find((p) => p.name === newName);
+    if (personInContactList) {
+      if (
+        window.confirm(
+          `${newName} is already added to the phonebook, replace the old number with a new one?`
+        )
+      ) {
+        const changedPerson = { ...personInContactList, number: newNumber };
+        service.update(changedPerson).then((returnedPerson) => {
+          setPersons(
+            persons.map((p) => (p.id === changedPerson.id ? changedPerson : p))
+          );
+        });
+      }
+    } else {
+      service
+        .create({ name: newName, number: newNumber })
+        .then((returnedPerson) => {
+          setPersons(persons.concat(returnedPerson));
+        });
     }
-    service
-      .create({ name: newName, number: newNumber })
-      .then((returnedPerson) => {
-        setPersons(persons.concat(returnedPerson));
-      });
     setNewName("");
     setNewNumber("");
   };
 
   const deleteById = (id, contact) => {
     if (window.confirm(`Do you really want to delete the contact ${contact}`)) {
-      service.remove(id)
-      setPersons(persons.filter(p => p.id !== id))
+      service.remove(id);
+      setPersons(persons.filter((p) => p.id !== id));
     }
-  }
+  };
 
   const personsToShow =
     filter.length === 0
@@ -104,7 +117,7 @@ const App = () => {
         onSubmit={saveNumber}
       />
       <h2>Numbers</h2>
-      <Persons persons={personsToShow} deleteById={deleteById}/>
+      <Persons persons={personsToShow} deleteById={deleteById} />
     </div>
   );
 };
