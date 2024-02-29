@@ -11,6 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setNewFilter] = useState("");
+  const [message, setMessage] = useState(null)
   useEffect(() => {
     service.getAll().then((initialPersons) => {
       setPersons(initialPersons);
@@ -29,9 +30,11 @@ const App = () => {
         const changedPerson = { ...personInContactList, number: newNumber };
         service.update(changedPerson).then((returnedPerson) => {
           setPersons(
-            persons.map((p) => (p.id === changedPerson.id ? changedPerson : p))
+            persons.map((p) => (p.id === returnedPerson.id ? returnedPerson : p))
           );
         });
+        setMessage(`Updated the contact ${changedPerson.name}`)
+        setTimeout(() => setMessage(null), 5000)
       }
     } else {
       service
@@ -39,6 +42,8 @@ const App = () => {
         .then((returnedPerson) => {
           setPersons(persons.concat(returnedPerson));
         });
+        setMessage(`Added ${newName}`)
+        setTimeout(() => setMessage(null), 5000)
     }
     setNewName("");
     setNewNumber("");
@@ -61,6 +66,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification type='message' message={message}/>
       <Filter value={filter} onChange={(e) => setNewFilter(e.target.value)} />
       <PersonForm
         newName={newName}
